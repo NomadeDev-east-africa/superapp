@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DjiApp - Super Application</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+        }
+        
+        .app-container {
+            max-width: 428px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .balance-card {
+            background: white;
+            margin: -20px 20px 20px;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .balance-amount {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 10px 0;
+        }
+        
+        .balance-label {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            padding: 20px;
+        }
+        
+        .module-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: 2px solid transparent;
+        }
+        
+        .module-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+            border-color: #667eea;
+        }
+        
+        .module-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+        
+        .module-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .module-subtitle {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .page-container {
+            padding: 20px;
+            min-height: calc(100vh - 140px);
+        }
+        
+        .page-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .back-button {
+            background: #f0f0f0;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            margin-right: 12px;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .scanner-area {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            color: white;
+            margin-bottom: 24px;
+        }
+        
+        .scanner-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+        
+        .scanner-text {
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+        
+        .scanner-hint {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .manual-input {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        
+        .input-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            width: 100%;
+            padding: 16px;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-top: 20px;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-4px);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 150px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+        }
+        
+        .product-info {
+            padding: 12px;
+        }
+        
+        .product-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .product-price {
+            font-size: 16px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .survey-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .survey-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .survey-meta {
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 16px;
+        }
+        
+        .survey-reward {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .question-container {
+            margin-bottom: 24px;
+        }
+        
+        .question-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+        
+        .option-button {
+            width: 100%;
+            padding: 14px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+        }
+        
+        .option-button:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        
+        .option-button.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+        
+        .success-message {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        
+        .category-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+        
+        .category-tab {
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        
+        .category-tab.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        function App() {
+            const [currentPage, setCurrentPage] = useState('home');
+            const [balance, setBalance] = useState(5000);
+            const [scannedCode, setScannedCode] = useState('');
+            const [selectedAnswers, setSelectedAnswers] = useState({});
+
+            const HomePage = () => (
+                <div>
+                    <div className="header">
+                        <h1>🇩🇯 DjiApp</h1>
+                        <p>Votre super-app djiboutienne</p>
+                    </div>
+                    
+                    <div className="balance-card">
+                        <div className="balance-label">Solde disponible</div>
+                        <div className="balance-amount">{balance} DJF</div>
+                    </div>
+                    
+                    <div className="modules-grid">
+                        <div className="module-card" onClick={() => setCurrentPage('scanner')}>
+                            <div className="module-icon">📱</div>
+                            <div className="module-title">Recharge</div>
+                            <div className="module-subtitle">Scanner carte</div>
+                        </div>
+                        
+                        <div className="module-card" onClick={() => setCurrentPage('ecommerce')}>
+                            <div className="module-icon">🛒</div>
+                            <div className="module-title">E-Commerce</div>
+                            <div className="module-subtitle">Marketplace</div>
+                        </div>
+                        
+                        <div className="module-card" onClick={() => setCurrentPage('survey')}>
+                            <div className="module-icon">📊</div>
+                            <div className="module-title">Sondages</div>
+                            <div className="module-subtitle">Gagnez des points</div>
+                        </div>
+                        
+                        <div className="module-card">
+                            <div className="module-icon">👤</div>
+                            <div className="module-title">Profil</div>
+                            <div className="module-subtitle">Mon compte</div>
+                        </div>
+                    </div>
+                    
+                    <div style={{padding: '20px'}}>
+                        <div className="stats-grid">
+                            <div className="stat-card">
+                                <div className="stat-value">1,247</div>
+                                <div className="stat-label">Utilisateurs actifs</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-value">342</div>
+                                <div className="stat-label">Recharges aujourd'hui</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            const ScannerPage = () => {
+                const [manualCode, setManualCode] = useState('');
+                const [isScanning, setIsScanning] = useState(false);
+                const [showSuccess, setShowSuccess] = useState(false);
+
+                const simulateScan = () => {
+                    setIsScanning(true);
+                    setTimeout(() => {
+                        const code = 'DJ' + Math.floor(Math.random() * 10000000000);
+                        setScannedCode(code);
+                        setManualCode(code);
+                        setIsScanning(false);
+                    }, 2000);
+                };
+
+                const handleRecharge = () => {
+                    setShowSuccess(true);
+                    const amount = Math.floor(Math.random() * 2000) + 1000;
+                    setTimeout(() => {
+                        setBalance(balance + amount);
+                        setShowSuccess(false);
+                        setManualCode('');
+                        setScannedCode('');
+                    }, 2000);
+                };
+
+                return (
+                    <div className="page-container">
+                        <div className="page-header">
+                            <button className="back-button" onClick={() => setCurrentPage('home')}>←</button>
+                            <h2 className="page-title">Recharge Mobile</h2>
+                        </div>
+
+                        {showSuccess && (
+                            <div className="success-message">
+                                ✅ Recharge effectuée avec succès !
+                            </div>
+                        )}
+
+                        <div className="scanner-area" onClick={simulateScan}>
+                            <div className="scanner-icon">
+                                {isScanning ? '🔄' : '📷'}
+                            </div>
+                            <div className="scanner-text">
+                                {isScanning ? 'Scan en cours...' : 'Touchez pour scanner'}
+                            </div>
+                            <div className="scanner-hint">
+                                Positionnez la carte à gratter devant la caméra
+                            </div>
+                        </div>
+
+                        <div className="manual-input">
+                            <label className="input-label">Ou saisissez le code manuellement</label>
+                            <input 
+                                type="text" 
+                                className="input-field"
+                                placeholder="DJ123456789012"
+                                value={manualCode}
+                                onChange={(e) => setManualCode(e.target.value)}
+                            />
+                        </div>
+
+                        <button 
+                            className="btn-primary"
+                            onClick={handleRecharge}
+                            disabled={!manualCode}
+                        >
+                            Valider la recharge
+                        </button>
+
+                        <button className="btn-secondary">
+                            Historique des recharges
+                        </button>
+                    </div>
+                );
+            };
+
+            const EcommercePage = () => {
+                const [selectedCategory, setSelectedCategory] = useState('Tous');
+                const categories = ['Tous', 'Électronique', 'Mode', 'Alimentation', 'Maison'];
+
+                const products = [
+                    { id: 1, name: 'Smartphone', price: '45,000', icon: '📱' },
+                    { id: 2, name: 'T-shirt', price: '3,500', icon: '👕' },
+                    { id: 3, name: 'Écouteurs', price: '8,900', icon: '🎧' },
+                    { id: 4, name: 'Sac à dos', price: '12,000', icon: '🎒' },
+                    { id: 5, name: 'Montre', price: '15,500', icon: '⌚' },
+                    { id: 6, name: 'Chaussures', price: '18,000', icon: '👟' },
+                ];
+
+                return (
+                    <div className="page-container">
+                        <div className="page-header">
+                            <button className="back-button" onClick={() => setCurrentPage('home')}>←</button>
+                            <h2 className="page-title">Marketplace</h2>
+                        </div>
+
+                        <div className="category-tabs">
+                            {categories.map(cat => (
+                                <button 
+                                    key={cat}
+                                    className={`category-tab ${selectedCategory === cat ? 'active' : ''}`}
+                                    onClick={() => setSelectedCategory(cat)}
+                                >
+                                    {cat}
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="product-grid">
+                            {products.map(product => (
+                                <div key={product.id} className="product-card">
+                                    <div className="product-image">{product.icon}</div>
+                                    <div className="product-info">
+                                        <div className="product-name">{product.name}</div>
+                                        <div className="product-price">{product.price} DJF</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            };
+
+            const SurveyPage = () => {
+                const [currentSurvey, setCurrentSurvey] = useState(null);
+                const [completed, setCompleted] = useState(false);
+
+                const surveys = [
+                    {
+                        id: 1,
+                        title: 'Habitudes de consommation',
+                        organization: 'DISED - Direction des Statistiques',
+                        duration: '5 min',
+                        reward: '50 DJF',
+                        questions: [
+                            {
+                                id: 'q1',
+                                text: 'Combien dépensez-vous par mois en télécommunications ?',
+                                options: ['Moins de 5000 DJF', '5000-10000 DJF', '10000-20000 DJF', 'Plus de 20000 DJF']
+                            },
+                            {
+                                id: 'q2',
+                                text: 'À quelle fréquence achetez-vous en ligne ?',
+                                options: ['Jamais', 'Rarement', 'Parfois', 'Souvent']
+                            }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        title: 'Économie numérique à Djibouti',
+                        organization: 'Banque Mondiale - Bureau Djibouti',
+                        duration: '7 min',
+                        reward: '75 DJF',
+                        questions: []
+                    },
+                    {
+                        id: 3,
+                        title: 'Satisfaction services publics',
+                        organization: 'ADDS - Agence Développement Social',
+                        duration: '4 min',
+                        reward: '40 DJF',
+                        questions: []
+                    }
+                ];
+
+                const handleAnswer = (questionId, answer) => {
+                    setSelectedAnswers({...selectedAnswers, [questionId]: answer});
+                };
+
+                const submitSurvey = () => {
+                    setCompleted(true);
+                    const reward = parseInt(currentSurvey.reward);
+                    setTimeout(() => {
+                        setBalance(balance + reward);
+                        setCurrentSurvey(null);
+                        setCompleted(false);
+                        setSelectedAnswers({});
+                    }, 2000);
+                };
+
+                if (currentSurvey) {
+                    return (
+                        <div className="page-container">
+                            <div className="page-header">
+                                <button className="back-button" onClick={() => setCurrentSurvey(null)}>←</button>
+                                <h2 className="page-title">Sondage</h2>
+                            </div>
+
+                            {completed ? (
+                                <div className="success-message">
+                                    🎉 Merci ! Vous avez gagné {currentSurvey.reward} !
+                                </div>
+                            ) : (
+                                <>
+                                    <div className="survey-card">
+                                        <div className="survey-reward">🎁 Récompense: {currentSurvey.reward}</div>
+                                        <div className="survey-title">{currentSurvey.title}</div>
+                                        <div className="survey-meta">
+                                            {currentSurvey.organization} • {currentSurvey.duration}
+                                        </div>
+                                    </div>
+
+                                    {currentSurvey.questions.map((question, index) => (
+                                        <div key={question.id} className="question-container">
+                                            <div className="question-text">
+                                                {index + 1}. {question.text}
+                                            </div>
+                                            {question.options.map(option => (
+                                                <button
+                                                    key={option}
+                                                    className={`option-button ${selectedAnswers[question.id] === option ? 'selected' : ''}`}
+                                                    onClick={() => handleAnswer(question.id, option)}
+                                                >
+                                                    {option}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    ))}
+
+                                    <button 
+                                        className="btn-primary"
+                                        onClick={submitSurvey}
+                                        disabled={Object.keys(selectedAnswers).length < currentSurvey.questions.length}
+                                    >
+                                        Soumettre le sondage
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    );
+                }
+
+                return (
+                    <div className="page-container">
+                        <div className="page-header">
+                            <button className="back-button" onClick={() => setCurrentPage('home')}>←</button>
+                            <h2 className="page-title">Sondages disponibles</h2>
+                        </div>
+
+                        <p style={{color: '#666', marginBottom: '20px'}}>
+                            Répondez aux sondages et gagnez des points !
+                        </p>
+
+                        {surveys.map(survey => (
+                            <div key={survey.id} className="survey-card" onClick={() => setCurrentSurvey(survey)}>
+                                <div className="survey-reward">🎁 Récompense: {survey.reward}</div>
+                                <div className="survey-title">{survey.title}</div>
+                                <div className="survey-meta">
+                                    {survey.organization} • {survey.duration}
+                                </div>
+                                <button className="btn-primary" style={{marginTop: '12px'}}>
+                                    Commencer →
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                );
+            };
+
+            return (
+                <div className="app-container">
+                    {currentPage === 'home' && <HomePage />}
+                    {currentPage === 'scanner' && <ScannerPage />}
+                    {currentPage === 'ecommerce' && <EcommercePage />}
+                    {currentPage === 'survey' && <SurveyPage />}
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
